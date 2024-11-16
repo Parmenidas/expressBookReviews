@@ -12,32 +12,77 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    res.send(JSON.stringify(books,null,4));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    // Extract the isbn parameter from the request URL
+    const isbn = req.params.isbn;
+    // Get the book
+    let book = books[isbn];
+    // Send the data in JSON format
+    if (book){ // If book exists
+        res.send(JSON.stringify(book,null,4));
+    }else{
+        res.send("Unable to find book");
+    }    
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    // Extract author
+    const author = req.params.author;
+    // Save all books with the same authors
+    book_list = [];
+
+    // Check the list of books
+    for(var key in books) {
+        var book = books[key];
+        if( book["author"] == author ){
+            book_list.push(book);
+        }        
+      }
+    if (book_list.length){ // If at least one book is found
+        res.send(JSON.stringify(book_list,null,4));
+    }else{
+        res.send("Unable to find book");
+    }      
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    // Extract title
+    const title = req.params.title;
+    // Save all books with the same authors
+    book_list = [];
+
+    // Check the list of books
+    for(var key in books) {
+        var book = books[key];
+        if( book["title"] == title ){
+            book_list.push(book);
+        }        
+      }
+    if (book_list.length){ // If at least one book is found
+        res.send(JSON.stringify(book_list,null,4));
+    }else{
+        res.send("Unable to find book");
+    }      
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    // Extract the isbn parameter from the request URL
+    const isbn = req.params.isbn;
+    // Get the book
+    let book = books[isbn];
+    // Send the data in JSON format
+    if (book){ // If book exists
+        res.send(JSON.stringify(book["reviews"],null,4));
+    }else{
+        res.send("Unable to find book");
+    }    
 });
 
 module.exports.general = public_users;
