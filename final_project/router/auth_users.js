@@ -59,14 +59,18 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    // Everything looks good, so let's add a review
+    // Find the book
     let book = books[req.params.isbn];
-    let review_list = book["reviews"];
-    review_list.push({
-        user: req.user,
-        review: req.query.review
-    });
-
+    if (book){
+        // Get reviews
+        let review_list = book["reviews"];
+        // Add review
+        review_list[req.session.authorization['username']] = req.query.review;
+        // Send updated info
+        res.send(review_list);
+    }else{
+        res.send("Unable to find book");
+    }
     
 });
 

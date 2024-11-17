@@ -52,7 +52,7 @@ public_users.get('/author/:author',function (req, res) {
     // Check the list of books
     for(var key in books) {
         var book = books[key];
-        if( book["author"] == author ){
+        if( book["author"] === author ){
             book_list.push(book);
         }        
       }
