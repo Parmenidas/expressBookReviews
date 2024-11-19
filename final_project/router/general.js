@@ -25,21 +25,45 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books,null,4));
+    
+    //Creating a promise method.
+    let myPromise = new Promise((resolve,reject) => {        
+        resolve(books);        
+    });
+
+    //Call the promise and wait for it to be resolved and then print a message.
+    // The promise cannot really fail, as an empty list is acceptable.
+    myPromise.then((successMessage) => {
+        res.send(JSON.stringify(successMessage,null,4));    
+    });
+    
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
+    
     // Extract the isbn parameter from the request URL
     const isbn = req.params.isbn;
     // Get the book
     let book = books[isbn];
     // Send the data in JSON format
-    if (book){ // If book exists
+
+    //Creating a promise method.
+    let myPromise = new Promise((resolve,reject) => {
+        if(book){
+            resolve(book);            
+        }else{
+            reject("Unable to find book")
+        }
+    });
+
+    // Call promise
+    myPromise.then((book)=>{
         res.send(JSON.stringify(book,null,4));
-    }else{
-        res.send("Unable to find book");
-    }    
+    }).catch((err)=>{
+        res.send(err);
+    })
+ 
  });
   
 // Get book details based on author
@@ -50,17 +74,27 @@ public_users.get('/author/:author',function (req, res) {
     book_list = [];
 
     // Check the list of books
-    for(var key in books) {
-        var book = books[key];
-        if( book["author"] === author ){
-            book_list.push(book);
-        }        
-      }
-    if (book_list.length){ // If at least one book is found
+    let promiseAuthor = new Promise((resolve,reject) => { 
+        for(var key in books) {
+            var book = books[key];
+            if( book["author"] === author ){
+                book_list.push(book);
+            }        
+          }
+        if (book_list.length){ // If at least one book is found
+            resolve(book_list);
+        }else{
+            reject("Unable to find book");
+        }
+    });
+
+    // Call promise
+    promiseAuthor.then((book_list)=>{
         res.send(JSON.stringify(book_list,null,4));
-    }else{
-        res.send("Unable to find book");
-    }      
+    }).catch((err)=>{
+        res.send(err);
+    })
+    
 });
 
 // Get all books based on title
@@ -71,17 +105,26 @@ public_users.get('/title/:title',function (req, res) {
     book_list = [];
 
     // Check the list of books
-    for(var key in books) {
-        var book = books[key];
-        if( book["title"] == title ){
-            book_list.push(book);
-        }        
-      }
-    if (book_list.length){ // If at least one book is found
+    let promiseTitle = new Promise((resolve,reject) => { 
+        for(var key in books) {
+            var book = books[key];
+            if( book["title"] === title ){
+                book_list.push(book);
+            }        
+          }
+        if (book_list.length){ // If at least one book is found
+            resolve(book_list);
+        }else{
+            reject("Unable to find book");
+        }
+    });
+
+    // Call promise
+    promiseTitle.then((book_list)=>{
         res.send(JSON.stringify(book_list,null,4));
-    }else{
-        res.send("Unable to find book");
-    }      
+    }).catch((err)=>{
+        res.send(err);
+    })    
 });
 
 //  Get book review
